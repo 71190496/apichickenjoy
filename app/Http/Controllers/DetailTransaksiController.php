@@ -20,15 +20,8 @@ class DetailTransaksiController extends Controller
             'items.*.jumlah_pesanan' => 'required|integer|min:1',
             'metode_pembayaran' => 'required',
             'nama_pelanggan' => 'required',
-        ]);
-        // $id_user = $request->input('id_user');
-        // dd($id_user);
-        // $metode_pembayaran = $request->input('metode_pembayaran');
-        // dd($metode_pembayaran);
+        ]); 
         $items = $request->input('items');
-        // dd($items);
-        // $nama_pelanggan = $request->input('nama_pelanggan');
-        // dd($nama_pelanggan);
         $totalHarga = 0;
         $totalPesanan = 0;
 
@@ -38,29 +31,19 @@ class DetailTransaksiController extends Controller
             'metode_pembayaran' => $request->input('metode_pembayaran'),
             'waktu_transaksi' => now(),
             'nama_pelanggan' => $request->input('nama_pelanggan'),
-        ]);
-        // dd($detailTransaksi);
+        ]); 
 
         foreach ($items as $item) {
             $menu = Menu::find($item['id_menu']);
 
             if (!$menu) {
-                return response()->json(['error' => 'Menu not found.'], 404);
-            }
-
-            // // Memeriksa ketersediaan stok
-            // if ($menu->jumlah_stok < $item['jumlah_pesanan']) {
-            //     return response()->json(['error' => 'Stok tidak cukup untuk menu ' . $menu->nama_menu], 400);
-            // }
+                return response()->json(['statusCode' => 404, 'error' => 'Menu tidak ditemukan.'], 404);
+            } 
 
             $totalHarga += $menu->harga * $item['jumlah_pesanan'];
             $totalPesanan += $item['jumlah_pesanan'];
 
-            // Membuat relasi detail transaksi dengan menu yang dipesan
-            // $detailTransaksi->menus()->attach($menu->id_menu, [
-            //     'jumlah_pesanan' => $item['jumlah_pesanan'],
-            //     'total_harga' => $menu->harga * $item['jumlah_pesanan'],
-            // ]);
+            
 
             // Menambahkan entri ke dalam tabel Pesanan
             $detailTransaksi->pesanan()->create([
@@ -69,13 +52,7 @@ class DetailTransaksiController extends Controller
                 'total_harga' => $menu->harga * $item['jumlah_pesanan'],
                 'catatan' => $item['catatan'] ?? null,
             ]);
-
-            
-
-            // // Mengurangi stok menu
-            // $menu->update([
-            //     'jumlah_stok' => $menu->jumlah_stok - $item['jumlah_pesanan'],
-            // ]);
+ 
         }
 
         // Mengupdate total harga dan total pesanan pada detail transaksi
@@ -84,6 +61,10 @@ class DetailTransaksiController extends Controller
             'jumlah_pesanan' => $totalPesanan,
         ]);
 
-        return response()->json(new DetailTransaksiResource($detailTransaksi), 201);
+        return response()->json([
+            'statusCode' => 201,
+            'message' => 'Pesanan dibuat',
+            'data' => new DetailTransaksiResource($detailTransaksi),
+        ], 201);
     }
 }

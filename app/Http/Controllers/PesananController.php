@@ -73,13 +73,10 @@ class PesananController extends Controller
             'items' => [],
         ];
 
-
-
         foreach ($groupedPesanan as $idMenu => $pesananMenu) {
             $menu = $pesananMenu->first()->menu;
 
             $summary['items'][] = [
-                // 'id_menu' => $idMenu,
                 'nama_menu' => $menu->nama_menu,
                 'harga_menu' => $menu->harga,
                 'jumlah_pesanan' => $pesananMenu->sum('jumlah_pesanan'),
@@ -87,14 +84,14 @@ class PesananController extends Controller
             ];
         }
 
-        $result = [ 
-            'summary' => $summary,
+        $result = [
+            'statusCode' => $pesanan->isEmpty() ? 404 : 200,
+            'message' => $pesanan->isEmpty() ? ($errorMessage ?: 'Data penjualan tidak ada.') : 'Data penjualan ditemukan.',
+            'data' => [
+                'summary' => $summary,
+            ],
         ];
-
-        if ($pesanan->isEmpty()) {
-            $result['message'] = $errorMessage ?: 'Data penjualan belum ada.';
-        }
-
-        return response()->json($result);
+    
+        return response()->json($result, $result['statusCode']);
     }
 }
