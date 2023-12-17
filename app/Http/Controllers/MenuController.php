@@ -99,4 +99,18 @@ class MenuController extends Controller
 
         return response()->json(['statusCode' => 200, 'message' => 'Menu berhasil dihapus'], 200);
     }
+
+    public function kategori()
+    {
+        $categories = Menu::select('kategori')->distinct()->get();
+
+        if ($categories->isEmpty()) {
+            return response()->json(['status' => 404, 'message' => 'Kategori tidak ditemukan', 'data' => []], 404);
+        }
+
+        return response()->json(['statusCode' => 200, 'message' => 'Kategori ditemukan', 'data' => $categories->pluck('kategori')], 200);
+
+    }
+
+    
 }

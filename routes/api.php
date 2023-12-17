@@ -33,6 +33,7 @@ Route::get('/user', [UserController::class, 'index']);
 // Route menu
 Route::get('/menu', [MenuController::class, 'index']);
 Route::get('/menu/kategori/{kategori}', [MenuController::class, 'indexByCategory']);
+Route::get('/menu/kategori', [MenuController::class, 'kategori']);
 // Route::get('/menu/kategori/Minuman', [MenuController::class, 'indexByCategory']);
 // Route::get('/menu/kategori/Roti%20Bakar%20Paket%20Rame-rame', [MenuController::class, 'indexByCategory']);
 // Route::get('/menu/kategori/Roti%20Bakar%20Paket%20Sendiri', [MenuController::class, 'indexByCategory']);
@@ -42,7 +43,7 @@ Route::delete('/hapus-menu/{id}', [MenuController::class, 'destroy'])->middlewar
 
 // Route Login & Logout
 Route::post('/login', [AuthController::class, 'login']);
-Route::post('/register', [AuthController::class, 'register'])->middleware(['auth:sanctum','role:admin']);
+Route::post('/register', [AuthController::class, 'register']);
 Route::get('/logout', [AuthController::class, 'logout'])->middleware(['auth:sanctum']);
 
 

@@ -16,12 +16,18 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-        // Pastikan hanya admin yang dapat mengakses rute registrasi
-        if (auth()->user() && auth()->user()->role !== 'admin') {
-            throw ValidationException::withMessages([
-                'message' => ['Unauthorized access.'],
-            ]);
-        }
+
+
+        // $sha512PasswordFromKotlin = $request->password;
+        // $bcryptPassword = Hash::make($sha512PasswordFromKotlin);
+        // dd($bcryptPassword);
+
+        // // Pastikan hanya admin yang dapat mengakses rute registrasi
+        // if (auth()->user() && auth()->user()->role !== 'admin') {
+        //     throw ValidationException::withMessages([
+        //         'message' => ['Unauthorized access.'],
+        //     ]);
+        // }
 
         try {
             $request->validate([
@@ -33,7 +39,7 @@ class AuthController extends Controller
             $user = User::create([
                 'username' => $request->username,
                 'nama_karyawan' => $request->input('nama_karyawan'),
-                'password' => Hash::make($request->password),
+                'password' => Hash::make($request->password), 
                 'role' => 'karyawan',
             ]);
 
@@ -66,8 +72,25 @@ class AuthController extends Controller
     }
 
 
+
     public function login(Request $request)
     {
+
+        // $user = User::where('username', $request->username)->first();
+        // $password = $request->password;
+        // // $bcryptPassword = Hash::make($password);
+        // // dd($bcryptPassword);
+        // if ($user && Hash::check($password, $user->password)) {
+        //     // dd($password);
+        //     // Login berhasil 
+        //     return response()->json(['message' => 'Login berhasil']);
+        // } else {
+        //     // Login gagal
+        //     return response()->json(['message' => 'Username atau password salah'], 401);
+        // }
+
+
+
         try {
             $request->validate([
                 'username' => 'required',
