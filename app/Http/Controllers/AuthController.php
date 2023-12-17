@@ -76,9 +76,15 @@ class AuthController extends Controller
 
             $user = User::where('username', $request->username)->first();
 
-            if (!$user || !Hash::check($request->password, $user->password)) {
+            if (!$user) {
                 throw ValidationException::withMessages([
-                    'message' => ['The provided credentials are incorrect.'],
+                    'message' => ['Username salah.'],
+                ]);
+            }
+
+            if (!Hash::check($request->password, $user->password)) {
+                throw ValidationException::withMessages([
+                    'message' => ['Password salah.'],
                 ]);
             }
 
@@ -107,7 +113,7 @@ class AuthController extends Controller
             // Penanganan kesalahan validasi (kredensial salah, akses tidak diizinkan)
             return response()->json([
                 'statusCode' => 401,
-                'message' => 'Password Salah',
+                'message' => 'Validasi Error',
                 'errors' => $e->errors(),
             ], 401);
         } catch (\Exception $e) {

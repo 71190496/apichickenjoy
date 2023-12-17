@@ -71,7 +71,7 @@ class MenuController extends Controller
         $menu = Menu::find($id);
 
         if (!$menu) {
-            return response()->json(['error' => 'Menu tidak ditemukan.'], 404);
+            return response()->json(['statusCode' => 404, 'error' => 'Menu tidak ditemukan.'], 404);
         }
 
         $menu->update([
