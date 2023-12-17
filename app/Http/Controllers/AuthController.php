@@ -25,7 +25,7 @@ class AuthController extends Controller
 
         try {
             $request->validate([
-                'username' => 'required|unique:users',
+                'username' => 'required|unique:User',
                 'password' => 'required|min:6',
                 'nama_karyawan' => 'required',
             ]);
