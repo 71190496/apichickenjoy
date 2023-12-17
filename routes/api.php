@@ -32,10 +32,10 @@ Route::get('/user', [UserController::class, 'index']);
 
 // Route menu
 Route::get('/menu', [MenuController::class, 'index']);
-Route::get('/menu/kategori/Makanan', [MenuController::class, 'index']);
-Route::get('/menu/kategori/Minuman', [MenuController::class, 'index']);
-Route::get('/menu/kategori/Roti%20Bakar%20Paket%20Rame-rame', [MenuController::class, 'index']);
-Route::get('/menu/kategori/Roti%20Bakar%20Paket%20Sendiri', [MenuController::class, 'index']);
+Route::get('/menu/kategori/{kategori}', [MenuController::class, 'indexByCategory']);
+// Route::get('/menu/kategori/Minuman', [MenuController::class, 'indexByCategory']);
+// Route::get('/menu/kategori/Roti%20Bakar%20Paket%20Rame-rame', [MenuController::class, 'indexByCategory']);
+// Route::get('/menu/kategori/Roti%20Bakar%20Paket%20Sendiri', [MenuController::class, 'indexByCategory']);
 Route::post('/tambah-menu', [MenuController::class, 'store'])->middleware(['auth:sanctum','role:admin']);
 Route::put('/edit-menu/{id}', [MenuController::class, 'update'])->middleware(['auth:sanctum','role:admin']);
 Route::delete('/hapus-menu/{id}', [MenuController::class, 'destroy'])->middleware(['auth:sanctum','role:admin']);
