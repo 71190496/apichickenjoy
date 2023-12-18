@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\DetailTransaksi;
 use App\Http\Resources\PesananResource;
 use App\Http\Resources\DetailTransaksiResource;
+use Barryvdh\DomPDF\Facade\PDF;
 
 class DetailTransaksiController extends Controller
 {
@@ -66,5 +67,21 @@ class DetailTransaksiController extends Controller
             'message' => 'Pesanan dibuat',
             'data' => new DetailTransaksiResource($detailTransaksi),
         ], 201);
+    }
+
+    public function generatePdf($id)
+    {
+        $detailTransaksi = DetailTransaksi::with('user', 'pesanan.menu')->findOrFail($id);
+
+        // HTML content
+        $html = view('nota', ['detailTransaksi' => $detailTransaksi])->render();
+
+
+        // Load PDF
+        $pdf = PDF::loadHtml($html)->setPaper('A4', 'portrait')->setWarnings(false);
+
+
+        // Download PDF
+        return $pdf->stream('nota.pdf');
     }
 }
