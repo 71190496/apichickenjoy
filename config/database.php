@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Str;
+DATABASE_URL=$(heroku config:get DATABASE_URL -a "stormy-plains-56457")
 $DATABASE_URL=parse_url('DATABASE_URL');
 return [
 
