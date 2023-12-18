@@ -57,3 +57,6 @@ Route::get('/summary-penjualan/today', [PesananController::class, 'showToday']);
 Route::get('/summary-penjualan/yesterday', [PesananController::class, 'showYesterday']);
 Route::get('/summary-penjualan/last-week', [PesananController::class, 'showLastWeek']);
 Route::get('/summary-penjualan/last-month', [PesananController::class, 'showLastMonth']);
+
+//Route Nota
+Route::get('/nota-transaksi/{id}', [DetailTransaksiController::class, 'generatePdf']);
