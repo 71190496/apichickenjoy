@@ -21,7 +21,7 @@ class DetailTransaksiController extends Controller
             'items.*.jumlah_pesanan' => 'required|integer|min:1',
             'metode_pembayaran' => 'required',
             'nama_pelanggan' => 'required',
-        ]); 
+        ]);
         $items = $request->input('items');
         $totalHarga = 0;
         $totalPesanan = 0;
@@ -32,19 +32,19 @@ class DetailTransaksiController extends Controller
             'metode_pembayaran' => $request->input('metode_pembayaran'),
             'waktu_transaksi' => now(),
             'nama_pelanggan' => $request->input('nama_pelanggan'),
-        ]); 
+        ]);
 
         foreach ($items as $item) {
             $menu = Menu::find($item['id_menu']);
 
             if (!$menu) {
                 return response()->json(['statusCode' => 404, 'error' => 'Menu tidak ditemukan.'], 404);
-            } 
+            }
 
             $totalHarga += $menu->harga * $item['jumlah_pesanan'];
             $totalPesanan += $item['jumlah_pesanan'];
 
-            
+
 
             // Menambahkan entri ke dalam tabel Pesanan
             $detailTransaksi->pesanan()->create([
@@ -53,7 +53,6 @@ class DetailTransaksiController extends Controller
                 'total_harga' => $menu->harga * $item['jumlah_pesanan'],
                 'catatan' => $item['catatan'] ?? null,
             ]);
- 
         }
 
         // Mengupdate total harga dan total pesanan pada detail transaksi
@@ -69,17 +68,21 @@ class DetailTransaksiController extends Controller
         ], 201);
     }
 
-    public function generatePdf($id)
+    public function generatePdf(Request $request)
     {
-        $detailTransaksi = DetailTransaksi::with('user', 'pesanan.menu')->findOrFail($id);
+        $id_transaksi = $request->input('id_transaksi');
+
+        if (!$id_transaksi) {
+            return response()->json(['message' => 'ID transaksi diperlukan'], 400);
+        }
+
+        $detailTransaksi = DetailTransaksi::with('user', 'pesanan.menu')->findOrFail($id_transaksi);
 
         // HTML content
         $html = view('nota', ['detailTransaksi' => $detailTransaksi])->render();
 
-
         // Load PDF
         $pdf = PDF::loadHtml($html)->setPaper('A4', 'portrait')->setWarnings(false);
-
 
         // Download PDF
         return $pdf->stream('nota.pdf');

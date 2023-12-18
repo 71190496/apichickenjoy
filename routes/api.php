@@ -59,4 +59,4 @@ Route::get('/summary-penjualan/last-week', [PesananController::class, 'showLastW
 Route::get('/summary-penjualan/last-month', [PesananController::class, 'showLastMonth']);
 
 //Route Nota
-Route::get('/nota-transaksi/{id}', [DetailTransaksiController::class, 'generatePdf']);
+Route::get('/nota-transaksi', [DetailTransaksiController::class, 'generatePdf']);
