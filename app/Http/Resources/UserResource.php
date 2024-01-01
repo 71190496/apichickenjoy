@@ -20,6 +20,16 @@ class UserResource extends JsonResource
             'username'=>$this->username,
             'password'=>$this->password,
             'role'=>$this->role,
+            'image'=>$this->getImageUrl(),
          ];
+    }
+
+    protected function getImageUrl()
+    {
+        if ($this->image) {
+            return url("api/user/{$this->id_user}/image");
+        }
+
+        return null;
     }
 }

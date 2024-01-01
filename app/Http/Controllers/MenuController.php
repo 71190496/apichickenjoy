@@ -2,15 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Menu;
-use App\Http\Resources\MenuResource;
-use Illuminate\Support\Facades\Storage;
 use Imagine\Image\Box;
 use Imagine\Image\Point;
-use Imagine\Gd\Imagine;
-use Illuminate\Support\Facades\Response;
-
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use App\Http\Resources\MenuResource;
+use Illuminate\Validation\ValidationException;
 
 class MenuController extends Controller
 {
@@ -25,6 +23,7 @@ class MenuController extends Controller
         return response()->json(['statusCode' => 200, 'message' => 'Menu ditemukan', 'data' => MenuResource::collection($menu)], 200);
     }
 
+
     public function indexByCategory($kategori)
     {
         $query = Menu::query();
@@ -38,6 +37,7 @@ class MenuController extends Controller
 
         return response()->json(['statusCode' => 200, 'message' => 'Kategori ditemukan', 'data' => MenuResource::collection($menus)], 200);
     }
+
 
     public function store(Request $request)
     {
@@ -102,14 +102,13 @@ class MenuController extends Controller
         $imageUrl = url("api/menu/{$menu->id_menu}/image");
 
         $responseData = [
-            'status_code' => 201,
+            'statusCode' => 201,
             'message' => 'Menu berhasil ditambahkan',
-            'data' => new MenuResource($menu), 
+            'data' => new MenuResource($menu),
         ];
 
         return response()->json($responseData, 201);
     }
-
 
     public function getImage($id)
     {
@@ -141,9 +140,9 @@ class MenuController extends Controller
         return response($decodedImageData, 200)->withHeaders($headers);
     }
 
-
     public function update(Request $request, $id)
     {
+        
         $request->validate([
             'nama_menu' => 'required',
             'harga' => 'required|numeric',
@@ -151,6 +150,7 @@ class MenuController extends Controller
             'jumlah_stok' => 'nullable|integer',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
+        
 
         $menu = Menu::find($id);
 
@@ -209,29 +209,28 @@ class MenuController extends Controller
         $imageUrl = url("api/menu/{$menu->id_menu}/image");
 
         $responseData = [
-            'status_code' => 200,
+            'statusCode' => 201,
             'message' => 'Menu berhasil diperbarui',
-            'data' => new MenuResource($menu), 
+            'data' => new MenuResource($menu),
         ];
 
-        return response()->json($responseData, 200);
+        return response()->json($responseData, 201);
     }
 
-
-    public function destroy($id)
+    public function destroy($id_menu)
     {
-        $menu = Menu::find($id);
+        $menu = Menu::find($id_menu);
 
         if (!$menu) {
-            return response()->json(['error' => 'Menu tidak ditemukan'], 404);
+            return response()->json(['statusCode' => 404, 'error' => 'Menu tidak ditemukan'], 404);
         }
 
         $menu->delete();
 
-        return response()->json(['message' => 'Menu berhasil dihapus'], 200);
+        return response()->json(['statusCode' => 200, 'message' => 'Menu berhasil dihapus'], 200);
     }
 
-    public function kategori(Request $request)
+    public function kategori()
     {
         $categories = Menu::select('kategori')->distinct()->get();
 

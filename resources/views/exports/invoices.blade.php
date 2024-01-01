@@ -20,7 +20,7 @@
                 <tbody>
                     @foreach ($invoicesByCategory as $invoice)
                         <tr>
-                            <td>{{ $invoice->transaksi->created_at }}</td>
+                            <td>{{ $invoice->created_at }}</td>
                             <td>{{ $invoice->menu->nama_menu }}</td>
                             <td>{{ $invoice->jumlah_pesanan }}</td>
                             <td>{{ $invoice->id_transaksi }}</td>
@@ -30,7 +30,7 @@
                         @php
                             $totalPendapatan += $invoice->total_harga;
                         @endphp
-                    @endforeach  
+                    @endforeach
                     <tr>
                         <td colspan="5" style="text-align: right;"><strong>Total Pendapatan:</strong></td>
                         <td>{{ $totalPendapatan }}</td>
