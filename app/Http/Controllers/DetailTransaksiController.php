@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Menu;
-use App\Models\Pesanan;
 use Illuminate\Http\Request;
 use App\Models\DetailTransaksi;
-use App\Http\Resources\PesananResource;
 use App\Http\Resources\DetailTransaksiResource;
-use Barryvdh\DomPDF\Facade\PDF;
+use App\Models\Menu;
+use \PDF;
+
 
 class DetailTransaksiController extends Controller
 {
@@ -22,6 +21,10 @@ class DetailTransaksiController extends Controller
             'metode_pembayaran' => 'required',
             'nama_pelanggan' => 'required',
         ]);
+
+        // $id_user = $request->input('id_user');
+        // dd($id_user);
+
         $items = $request->input('items');
         $totalHarga = 0;
         $totalPesanan = 0;
@@ -38,13 +41,16 @@ class DetailTransaksiController extends Controller
             $menu = Menu::find($item['id_menu']);
 
             if (!$menu) {
-                return response()->json(['statusCode' => 404, 'error' => 'Menu tidak ditemukan.'], 404);
+                return response()->json(['error' => 'Menu not found.'], 404);
             }
+
+            // // Memeriksa ketersediaan stok
+            // if ($menu->jumlah_stok < $item['jumlah_pesanan']) {
+            //     return response()->json(['error' => 'Stok tidak cukup untuk menu ' . $menu->nama_menu], 400);
+            // }
 
             $totalHarga += $menu->harga * $item['jumlah_pesanan'];
             $totalPesanan += $item['jumlah_pesanan'];
-
-
 
             // Menambahkan entri ke dalam tabel Pesanan
             $detailTransaksi->pesanan()->create([
@@ -53,6 +59,11 @@ class DetailTransaksiController extends Controller
                 'total_harga' => $menu->harga * $item['jumlah_pesanan'],
                 'catatan' => $item['catatan'] ?? null,
             ]);
+
+            // // Mengurangi stok menu
+            // $menu->update([
+            //     'jumlah_stok' => $menu->jumlah_stok - $item['jumlah_pesanan'],
+            // ]);
         }
 
         // Mengupdate total harga dan total pesanan pada detail transaksi
@@ -61,22 +72,22 @@ class DetailTransaksiController extends Controller
             'jumlah_pesanan' => $totalPesanan,
         ]);
 
-        return response()->json([
-            'statusCode' => 201,
-            'message' => 'Pesanan dibuat',
-            'data' => new DetailTransaksiResource($detailTransaksi),
-        ], 201);
+        return response()->json(new DetailTransaksiResource($detailTransaksi), 201);
     }
 
     public function generatePdf(Request $request)
     {
-        $id_transaksi = $request->input('id_transaksi');
+        $idtransaksi = $request->header('idtransaksi');
 
-        if (!$id_transaksi) {
-            return response()->json(['message' => 'ID transaksi diperlukan'], 400);
+        if (!$idtransaksi) {
+            return response()->json(['statuscode' => 400, 'message' => 'Header idtransaksi tidak ditemukan'], 400);
         }
 
-        $detailTransaksi = DetailTransaksi::with('user', 'pesanan.menu')->findOrFail($id_transaksi);
+        $detailTransaksi = DetailTransaksi::with('user', 'pesanan.menu')->find($idtransaksi);
+
+        if (!$detailTransaksi) {
+            return response()->json(['statuscode' => 404, 'message' => 'Data transaksi tidak ditemukan'], 404);
+        }
 
         // HTML content
         $html = view('nota', ['detailTransaksi' => $detailTransaksi])->render();

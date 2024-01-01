@@ -16,7 +16,16 @@ class MenuResource extends JsonResource
                 'harga' => $this->harga,
                 'kategori' => $this->kategori,
                 'jumlah_stok' => $this->jumlah_stok,
+                'image_url' => $this->getImageUrl(),
             ],
         ];
+    }
+    protected function getImageUrl()
+    {
+        if ($this->image) {
+            return url("api/menu/{$this->id_menu}/image");
+        }
+
+        return null;
     }
 }

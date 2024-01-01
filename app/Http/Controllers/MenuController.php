@@ -16,20 +16,28 @@ class MenuController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Menu::query();
+        $menu = Menu::all();
 
-        if ($request->has('kategori')) {
-            $query->where('kategori', $request->kategori);
+        if ($menu->isEmpty()) {
+            return response()->json(['statusCode' => 400, 'message' => 'Menu ditemukan',], 404);
         }
+
+        return response()->json(['statusCode' => 200, 'message' => 'Menu ditemukan', 'data' => MenuResource::collection($menu)], 200);
+    }
+
+    public function indexByCategory($kategori)
+    {
+        $query = Menu::query();
+        $query->where('kategori', $kategori);
 
         $menus = $query->get();
 
         if ($menus->isEmpty()) {
-            return response()->json(['message' => 'Kategori tidak ditemukan'], 404);
+            return response()->json(['statusCode' => 404, 'message' => 'Kategori tidak ditemukan'], 404);
         }
 
-        return MenuResource::collection($menus);
-    } 
+        return response()->json(['statusCode' => 200, 'message' => 'Kategori ditemukan', 'data' => MenuResource::collection($menus)], 200);
+    }
 
     public function store(Request $request)
     {
@@ -208,7 +216,7 @@ class MenuController extends Controller
             'image_url' => $imageUrl,
         ];
 
-        return response()->json($responseData, 201);
+        return response()->json($responseData, 200);
     }
 
 
