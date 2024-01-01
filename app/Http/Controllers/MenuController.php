@@ -104,8 +104,7 @@ class MenuController extends Controller
         $responseData = [
             'status_code' => 201,
             'message' => 'Menu berhasil ditambahkan',
-            'data' => new MenuResource($menu),
-            'image_url' => $imageUrl,
+            'data' => new MenuResource($menu), 
         ];
 
         return response()->json($responseData, 201);
@@ -212,8 +211,7 @@ class MenuController extends Controller
         $responseData = [
             'status_code' => 200,
             'message' => 'Menu berhasil diperbarui',
-            'data' => new MenuResource($menu),
-            'image_url' => $imageUrl,
+            'data' => new MenuResource($menu), 
         ];
 
         return response()->json($responseData, 200);
