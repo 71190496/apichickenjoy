@@ -14,7 +14,7 @@ services:
       - DB_CONNECTION=pgsql
       - DB_HOST=postgres
       - DB_PORT=5432
-      - DB_DATABASE=laravel
-      - DB_USERNAME=root
-      - DB_PASSWORD=root
+      - DB_DATABASE=chickenjoy-api
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=john21
     restart: always  # Enable automatic restarts
