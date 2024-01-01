@@ -34,29 +34,31 @@ Route::get('/user', [UserController::class, 'index']);
 Route::get('/menu', [MenuController::class, 'index']);
 Route::get('/menu/kategori/{kategori}', [MenuController::class, 'indexByCategory']);
 Route::get('/menu/kategori', [MenuController::class, 'kategori']);
+
 // Route::get('/menu/kategori/Minuman', [MenuController::class, 'indexByCategory']);
 // Route::get('/menu/kategori/Roti%20Bakar%20Paket%20Rame-rame', [MenuController::class, 'indexByCategory']);
 // Route::get('/menu/kategori/Roti%20Bakar%20Paket%20Sendiri', [MenuController::class, 'indexByCategory']);
 Route::post('/tambah-menu', [MenuController::class, 'store'])->middleware(['auth:sanctum','role:admin']);
-Route::put('/edit-menu/{id}', [MenuController::class, 'update'])->middleware(['auth:sanctum','role:admin']);
+Route::get('menu/{id}/image', [MenuController::class, 'getImage']);
+Route::post('/edit-menu/{id}', [MenuController::class, 'update'])->middleware(['auth:sanctum','role:admin']);
 Route::delete('/hapus-menu/{id}', [MenuController::class, 'destroy'])->middleware(['auth:sanctum','role:admin']);
 
-// Route Login & Logout
+// Route Login, Logout, Register & Delete User
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
+Route::get('user/{id}/image', [AuthController::class, 'getImage']);
 Route::get('/logout', [AuthController::class, 'logout'])->middleware(['auth:sanctum']);
+Route::delete('/destroy/{id_user}', [AuthController::class, 'destroy']);
+Route::post('/update/{id_user}', [AuthController::class, 'updateUser'])->middleware(['auth:sanctum','role:admin']);
+
 
 
 // Route Excel
-Route::get('/export', [ExportController::class, 'export']);
+Route::get('/export', [ExportController::class, 'export'])->middleware(['auth:sanctum','role:admin']);
 
 // Route Transaksi
 Route::post('/tambah-detail-transaksi', [DetailTransaksiController::class, 'store']);
-Route::get('/summary-penjualan/{date?}', [PesananController::class, 'show']);
-Route::get('/summary-penjualan/today', [PesananController::class, 'showToday']);
-Route::get('/summary-penjualan/yesterday', [PesananController::class, 'showYesterday']);
-Route::get('/summary-penjualan/last-week', [PesananController::class, 'showLastWeek']);
-Route::get('/summary-penjualan/last-month', [PesananController::class, 'showLastMonth']);
+Route::get('/summary-penjualan', [PesananController::class, 'showSummary']); 
 
 //Route Nota
 Route::get('/nota-transaksi', [DetailTransaksiController::class, 'generatePdf']);
