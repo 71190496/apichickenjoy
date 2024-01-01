@@ -58,7 +58,11 @@ Route::get('/export', [ExportController::class, 'export']);
 
 // Route Transaksi
 Route::post('/tambah-detail-transaksi', [DetailTransaksiController::class, 'store']);
-Route::get('/summary-penjualan', [PesananController::class, 'showSummary']); 
+Route::get('/summary-penjualan/{date?}', [PesananController::class, 'show']);
+Route::get('/summary-penjualan/today', [PesananController::class, 'showToday']);
+Route::get('/summary-penjualan/yesterday', [PesananController::class, 'showYesterday']);
+Route::get('/summary-penjualan/last-week', [PesananController::class, 'showLastWeek']);
+Route::get('/summary-penjualan/last-month', [PesananController::class, 'showLastMonth']); 
 
 //Route Nota
 Route::get('/nota-transaksi', [DetailTransaksiController::class, 'generatePdf']);
