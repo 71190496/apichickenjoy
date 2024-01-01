@@ -54,7 +54,7 @@ Route::post('/update/{id_user}', [AuthController::class, 'updateUser'])->middlew
 
 
 // Route Excel
-Route::get('/export', [ExportController::class, 'export'])->middleware(['auth:sanctum','role:admin']);
+Route::get('/export', [ExportController::class, 'export']);
 
 // Route Transaksi
 Route::post('/tambah-detail-transaksi', [DetailTransaksiController::class, 'store']);
