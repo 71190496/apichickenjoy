@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -27,7 +28,9 @@ class UserResource extends JsonResource
     protected function getImageUrl()
     {
         if ($this->image) {
-            return url("api/user/{$this->id_user}/image");
+            $randomString = Str::random(3);
+
+            return url("api/user/{$this->id_user}/image/{$randomString}");
         }
 
         return null;
