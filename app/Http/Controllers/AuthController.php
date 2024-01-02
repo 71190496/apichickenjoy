@@ -3,15 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+
 use Imagine\Image\Box;
-use App\Models\Karyawan;
 use Imagine\Image\Point;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Http\Resources\AuthResource;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
+use App\Http\Resources\LoginResource;
+use Illuminate\Support\Facades\Hash; 
 use Illuminate\Database\QueryException;
 use Illuminate\Validation\ValidationException;
 
@@ -180,7 +181,7 @@ class AuthController extends Controller
 
             $responseData = [
                 'status_code' => 200,
-                'message' => 'Menu berhasil diperbarui',
+                'message' => 'Profil berhasil diperbarui',
                 'data' => new AuthResource($user),
             ];
 
@@ -253,8 +254,7 @@ class AuthController extends Controller
 
 
     public function login(Request $request)
-    {
-
+    { 
         try {
             $request->validate([
                 'username' => 'required',
@@ -285,17 +285,8 @@ class AuthController extends Controller
             // Buat token berdasarkan peran pengguna
             $tokenName = $user->role === 'admin' ? 'Login Admin' : 'Login Karyawan';
             $plainTextToken = $user->createToken($tokenName)->plainTextToken;
-
-            $response = [
-                'statusCode' => 200,
-                'id_user' => $user->id_user,
-                'message' => $tokenName,
-                'username' => $user->username,
-                'plain_text_token' => $plainTextToken,
-            ];
-
-            // Convert the array to JSON and return the JSON response
-            return response()->json($response);
+            $responseData = new LoginResource($user);
+            return response()->json($responseData, 200);
         } catch (ValidationException $e) {
             // Penanganan kesalahan validasi (kredensial salah, akses tidak diizinkan)
             return response()->json([
