@@ -38,10 +38,10 @@ Route::get('/menu/kategori', [MenuController::class, 'kategori']);
 // Route::get('/menu/kategori/Minuman', [MenuController::class, 'indexByCategory']);
 // Route::get('/menu/kategori/Roti%20Bakar%20Paket%20Rame-rame', [MenuController::class, 'indexByCategory']);
 // Route::get('/menu/kategori/Roti%20Bakar%20Paket%20Sendiri', [MenuController::class, 'indexByCategory']);
-Route::post('/tambah-menu', [MenuController::class, 'store'])->middleware(['auth:sanctum','role:admin']);
+Route::post('/tambah-menu', [MenuController::class, 'store'])->middleware(['auth:sanctum']);
 Route::get('menu/{id}/image', [MenuController::class, 'getImage']);
-Route::post('/edit-menu/{id}', [MenuController::class, 'update'])->middleware(['auth:sanctum','role:admin']);
-Route::delete('/hapus-menu/{id}', [MenuController::class, 'destroy'])->middleware(['auth:sanctum','role:admin']);
+Route::post('/edit-menu/{id}', [MenuController::class, 'update'])->middleware(['auth:sanctum']);
+Route::delete('/hapus-menu/{id}', [MenuController::class, 'destroy'])->middleware(['auth:sanctum']);
 
 // Route Login, Logout, Register & Delete User
 Route::post('/login', [AuthController::class, 'login']);
@@ -49,7 +49,7 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::get('user/{id}/image', [AuthController::class, 'getImage']);
 Route::get('/logout', [AuthController::class, 'logout'])->middleware(['auth:sanctum']);
 Route::delete('/destroy/{id_user}', [AuthController::class, 'destroy']);
-Route::post('/update/{id_user}', [AuthController::class, 'updateUser'])->middleware(['auth:sanctum','role:admin']);
+Route::post('/update/{id_user}', [AuthController::class, 'updateUser'])->middleware(['auth:sanctum']);
 
 
 
