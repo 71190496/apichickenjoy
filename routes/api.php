@@ -46,7 +46,7 @@ Route::delete('/hapus-menu/{id}', [MenuController::class, 'destroy'])->middlewar
 // Route Login, Logout, Register & Delete User
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
-Route::get('user/{id}/image{randomString}', [AuthController::class, 'getImage']);
+Route::get('user/{id}/image/{randomString}', [AuthController::class, 'getImage']);
 Route::get('/logout', [AuthController::class, 'logout'])->middleware(['auth:sanctum']);
 Route::delete('/destroy/{id_user}', [AuthController::class, 'destroy']);
 Route::post('/update/{id_user}', [AuthController::class, 'updateUser'])->middleware(['auth:sanctum']);
