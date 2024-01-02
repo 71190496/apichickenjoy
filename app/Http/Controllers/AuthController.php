@@ -22,7 +22,7 @@ class AuthController extends Controller
     public function register(Request $request)
     {
 
-        try {
+        // try {
             $request->validate([
                 'username' => 'required|unique:User',
                 'password' => 'required|min:6',
@@ -91,32 +91,32 @@ class AuthController extends Controller
                 'data' => new AuthResource($user),
             ];
             return response()->json($responseData, 201);
-        } catch (ValidationException $e) {
-            // Penanganan kesalahan validasi
-            return response()->json([
-                'statusCode' => 400,
-                'message' => 'Registrasi Gagal',
-                'errors' => $e->errors(),
-            ], 400);
-        } catch (QueryException $e) {
-            // Penanganan kesalahan basis data (misalnya, unik constraint)
-            return response()->json([
-                'statusCode' => 400,
-                'message' => 'Registrasi Gagal',
-                'errors' => ['username' => ['Username sudah digunakan']],
-            ], 400);
-        } catch (\Exception $e) {
-            // Penanganan kesalahan umum
-            return response()->json([
-                'statusCode' => 500,
-                'message' => 'Terjadi kesalahan server.',
-            ]);
-        }
+        // } catch (ValidationException $e) {
+        //     // Penanganan kesalahan validasi
+        //     return response()->json([
+        //         'statusCode' => 400,
+        //         'message' => 'Registrasi Gagal',
+        //         'errors' => $e->errors(),
+        //     ], 400);
+        // } catch (QueryException $e) {
+        //     // Penanganan kesalahan basis data (misalnya, unik constraint)
+        //     return response()->json([
+        //         'statusCode' => 400,
+        //         'message' => 'Registrasi Gagal',
+        //         'errors' => ['username' => ['Username sudah digunakan']],
+        //     ], 400);
+        // } catch (\Exception $e) {
+        //     // Penanganan kesalahan umum
+        //     return response()->json([
+        //         'statusCode' => 500,
+        //         'message' => 'Terjadi kesalahan server.',
+        //     ]);
+        // }
     }
 
     public function updateUser(Request $request, $id_user)
     {
-        try {
+        // try {
             $request->validate([
                 'username' => 'required|unique:User',
                 'nama_karyawan' => 'required',
@@ -181,32 +181,32 @@ class AuthController extends Controller
 
             $responseData = [
                 'status_code' => 200,
-                'message' => 'Profil berhasil diperbarui',
+                'message' => 'Pofil berhasil diperbarui',
                 'data' => new AuthResource($user),
             ];
 
             return response()->json($responseData, 200);
-        } catch (ValidationException $e) {
-            // Penanganan kesalahan validasi
-            return response()->json([
-                'statusCode' => 400,
-                'message' => 'Pembaruan Gagal',
-                'errors' => $e->errors(),
-            ], 400);
-        } catch (QueryException $e) {
-            // Penanganan kesalahan basis data (misalnya, unik constraint)
-            return response()->json([
-                'statusCode' => 400,
-                'message' => 'Registrasi Gagal',
-                'errors' => ['username' => ['Username sudah digunakan']],
-            ], 400);
-        } catch (\Exception $e) {
-            // Penanganan kesalahan umum
-            return response()->json([
-                'statusCode' => 500,
-                'message' => 'Terjadi kesalahan server.',
-            ]);
-        }
+        // } catch (ValidationException $e) {
+        //     // Penanganan kesalahan validasi
+        //     return response()->json([
+        //         'statusCode' => 400,
+        //         'message' => 'Pembaruan Gagal',
+        //         'errors' => $e->errors(),
+        //     ], 400);
+        // } catch (QueryException $e) {
+        //     // Penanganan kesalahan basis data (misalnya, unik constraint)
+        //     return response()->json([
+        //         'statusCode' => 400,
+        //         'message' => 'Registrasi Gagal',
+        //         'errors' => ['username' => ['Username sudah digunakan']],
+        //     ], 400);
+        // } catch (\Exception $e) {
+        //     // Penanganan kesalahan umum
+        //     return response()->json([
+        //         'statusCode' => 500,
+        //         'message' => 'Terjadi kesalahan server.',
+        //     ]);
+        // }
     }
 
     public function getImage($id)
