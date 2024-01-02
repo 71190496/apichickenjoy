@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class MenuResource extends JsonResource
@@ -18,11 +19,13 @@ class MenuResource extends JsonResource
             'image' => $this->getImageUrl(),
         ];
     }
-    
     protected function getImageUrl()
     {
         if ($this->image) {
-            return url("api/menu/{$this->id_menu}/image");
+            // Membuat string acak maksimal 3 karakter
+            $randomString = Str::random(3);
+
+            return url("api/menu/{$this->id_menu}/image/{$randomString}");
         }
 
         return null;
