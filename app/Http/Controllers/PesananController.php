@@ -11,97 +11,116 @@ use Illuminate\Database\QueryException;
 
 class PesananController extends Controller
 {
-    public function show($date)
+    public function showSummary(Request $request)
     {
-        $pesanan = Pesanan::with('menu')
-            ->whereDate('created_at', $date)
-            ->get();
+        $criteria = $request->header('criteria');
 
-        return $this->generateSummaryResponse($pesanan);
+        switch ($criteria) {
+            case 'today':
+                $data = $this->getDataToday();
+                break;
+
+            case 'yesterday':
+                $data = $this->getDataYesterday();
+                break;
+
+            case 'this-week':
+                $data = $this->getThisWeekData();
+                break;
+
+            case 'this-month':
+                $data = $this->getThisMonthData();
+                break;
+
+            default:
+                return response()->json(['statusCode' => 404, 'error' => 'Invalid criteria provided.'], 400);
+        }
+
+        return response()->json($data);
     }
 
-    public function showToday()
+    private function getDataToday()
     {
         $today = Carbon::today();
         $pesanan = Pesanan::with('menu')
             ->whereDate('created_at', $today)
             ->get();
 
-        return $this->generateSummaryResponse($pesanan);
+        return $this->transformSummaryResponse($pesanan);
     }
 
-    public function showYesterday()
+    private function getDataYesterday()
     {
         $yesterday = Carbon::yesterday();
         $pesanan = Pesanan::with('menu')
             ->whereDate('created_at', $yesterday)
             ->get();
 
-        $errorMessage = 'Data penjualan belum ada sampai minggu lalu.';
-        return $this->generateSummaryResponse($pesanan, $errorMessage);
+        return $this->transformSummaryResponse($pesanan, 'Data penjualan belum ada.');
     }
 
-    public function showLastWeek()
+    private function getThisWeekData()
     {
-        try {
-            $now = Carbon::now();
-            $lastWeekStart = $now->subWeek()->startOfWeek();
-            $lastWeekEnd = $now->subWeek()->endOfWeek();
+        $thisWeekStart = Carbon::now()->startOfWeek();
+        $thisWeekEnd = Carbon::now()->endOfWeek();
 
-            $pesanan = Pesanan::with('menu')
-                ->whereBetween('created_at', [$lastWeekStart, $lastWeekEnd])
-                ->get();
-
-            return $this->generateSummaryResponse($pesanan);
-        } catch (QueryException $e) {
-            // Log or handle the exception as needed
-            return response()->json(['error' => 'Failed to retrieve data.'], 500);
-        }
-    }
-
-    public function showLastMonth()
-    {
-        $lastMonth = Carbon::now()->subMonth();
         $pesanan = Pesanan::with('menu')
-            ->whereDate('created_at', '>=', $lastMonth)
+            ->whereBetween('created_at', [$thisWeekStart, $thisWeekEnd])
             ->get();
 
-        return $this->generateSummaryResponse($pesanan);
+        return $this->transformSummaryResponse($pesanan, 'Data penjualan minggu ini belum ada.');
     }
 
-    private function generateSummaryResponse($pesanan, $errorMessage = null)
+    private function getThisMonthData()
     {
-        // Kelompokkan pesanan berdasarkan id_menu
-        $groupedPesanan = $pesanan->groupBy('id_menu');
+        $thisMonth = Carbon::now()->startOfMonth();
 
-        // Hitung informasi ringkasan
+        $pesanan = Pesanan::with('menu')
+            ->whereDate('created_at', '>=', $thisMonth)
+            ->get();
+
+        return $this->transformSummaryResponse($pesanan, 'Data penjualan bulan ini belum ada.');
+    }
+
+
+    private function transformSummaryResponse($pesanan, $errorMessage = null)
+    {
         $summary = [
-            'hari' => $pesanan->isNotEmpty() ? $pesanan->first()->created_at->translatedFormat('l') : null,
-            'tanggal' => $pesanan->isNotEmpty() ? $pesanan->first()->created_at->translatedFormat('j F Y') : null,
-            'total_harga' => $pesanan->sum('total_harga'),
+            'statusCode' => $pesanan->isEmpty() ? 200 : 200,
+            'message' => $pesanan->isEmpty() ? ($errorMessage ?: 'Data penjualan tidak ada.') : 'Data penjualan ditemukan.',
+            'pendapatan' => 0,
             'jumlah_pesanan' => $pesanan->sum('jumlah_pesanan'),
-            'items' => [],
+            'data' => []
         ];
 
-        foreach ($groupedPesanan as $idMenu => $pesananMenu) {
-            $menu = $pesananMenu->first()->menu;
+        $menuCounts = [];
 
-            $summary['items'][] = [
-                'nama_menu' => $menu->nama_menu,
-                'harga_menu' => $menu->harga,
-                'jumlah_pesanan' => $pesananMenu->sum('jumlah_pesanan'),
-                'total_harga_menu' => $pesananMenu->sum('total_harga'),
-            ];
+        foreach ($pesanan as $item) {
+            $menuNama = $item->menu->nama_menu;
+            $harga = $item->menu->harga;
+            $jumlah = $item->jumlah_pesanan;
+            $pendapatan = $harga * $jumlah;
+
+            // Jika menu sudah ada dalam array, tambahkan jumlahnya
+            if (isset($menuCounts[$menuNama])) {
+                $menuCounts[$menuNama]['jumlah'] += $jumlah;
+            } else {
+                $hargaFormatted = (float) $harga;
+                // Jika menu belum ada, tambahkan menu baru dengan jumlahnya
+                $menuCounts[$menuNama] = [
+                    'menu' => $menuNama,
+                    'harga' => $hargaFormatted,
+                    'jumlah' => $jumlah
+                ];
+            }
+            $summary['pendapatan'] += $pendapatan;
         }
 
-        $result = [
-            'statusCode' => $pesanan->isEmpty() ? 404 : 200,
-            'message' => $pesanan->isEmpty() ? ($errorMessage ?: 'Data penjualan tidak ada.') : 'Data penjualan ditemukan.',
-            'data' => [
-                'summary' => $summary,
-            ],
-        ];
+        // Konversi array asosiatif ke format array yang diinginkan untuk respons
+        foreach ($menuCounts as $menu) {
+            $summary['data'][] = $menu;
+        }
 
-        return response()->json($result, $result['statusCode']);
+        return $summary;
     }
 }
