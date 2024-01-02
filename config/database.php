@@ -82,6 +82,7 @@ return [
         //     'sslmode' => 'prefer',
         // ],
 
+
         // PRODUCTION
         'pgsql' => [
             'driver' => 'pgsql',
