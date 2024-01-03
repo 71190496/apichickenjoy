@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\User;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -26,7 +27,9 @@ class LoginResource extends JsonResource
     protected function getImageUrl()
     {
         if ($this->image) {
-            return url("api/user/{$this->id_user}/image");
+            $randomString = Str::random(3);
+
+            return url("api/user/{$this->id_user}/image/{$randomString}");
         }
 
         return null;
