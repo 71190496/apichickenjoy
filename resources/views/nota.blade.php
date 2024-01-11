@@ -84,7 +84,7 @@
 <body>
     <div class="header">
         <h1>Chiken Joy</h1>
-        <p style="font-size: 32px;">Jl. Dr. Wahidin Sudirohusodo No.5-25</p>
+        <p style="font-size: 32px;">Jl. Ukrim Jl. Kadirojo 2 No.08 /01, Kadirojo II, Purwomartani, Kec. Kalasan, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55571</p>
         <p style="font-size: 30px;">Telp : 082329561274</p>
     </div>
 
